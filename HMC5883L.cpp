@@ -291,6 +291,7 @@ int16_t HMC5883L::readRegister16(uint8_t reg)
     return value;
 }
 
+// Set the declination offset degrees in radians
 void HMC5883L::setDeclination( int declination_degs , int declination_mins, char declination_dir )
 {    
   // Convert declination to decimal degrees
@@ -301,9 +302,10 @@ void HMC5883L::setDeclination( int declination_degs , int declination_mins, char
       declination_offset_radians = ( declination_degs + (1/60 * declination_mins)) * (M_PI / 180);
       break;
       
-    // South and West are negative    
+    // South and West are negative. We use the absolute value of degrees and ommit negative sign because we subtract
+    // with 0 to return negative result.    
     case 'W':
-      declination_offset_radians =  0 - (( declination_degs + (1/60 * declination_mins) ) * (M_PI / 180));
+      declination_offset_radians =  0 - (( abs(declination_degs) + (1/60 * declination_mins) ) * (M_PI / 180));
       break;
   } 
 }
@@ -311,12 +313,13 @@ void HMC5883L::setDeclination( int declination_degs , int declination_mins, char
 float HMC5883L::getAzimuth(){
 	// calculate heading from the north and west magnetic axes
     Vector norm = readNormalize();
+    // Return heading in radians
     float heading = atan2(norm.YAxis, norm.XAxis);
 
 	if (compassFlip){
         heading = atan2(-norm.YAxis, norm.XAxis);
 	}
-	// Adjust the heading by the declination
+	// Adjust the heading by the declination radians
 	heading += declination_offset_radians;
 	
 	// Correct for when signs are reversed.
