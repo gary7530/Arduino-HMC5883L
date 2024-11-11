@@ -249,7 +249,6 @@ uint8_t HMC5883L::readRegister8(uint8_t reg)
     #endif
     Wire.endTransmission();
 
-    Wire.beginTransmission(HMC5883L_ADDRESS);
     Wire.requestFrom(HMC5883L_ADDRESS, 1);
     while(!Wire.available()) {};
     #if ARDUINO >= 100
@@ -257,7 +256,6 @@ uint8_t HMC5883L::readRegister8(uint8_t reg)
     #else
         value = Wire.receive();
     #endif;
-    Wire.endTransmission();
 
     return value;
 }
@@ -274,7 +272,6 @@ int16_t HMC5883L::readRegister16(uint8_t reg)
     #endif
     Wire.endTransmission();
 
-    Wire.beginTransmission(HMC5883L_ADDRESS);
     Wire.requestFrom(HMC5883L_ADDRESS, 2);
     while(!Wire.available()) {};
     #if ARDUINO >= 100
@@ -284,7 +281,6 @@ int16_t HMC5883L::readRegister16(uint8_t reg)
         uint8_t vha = Wire.receive();
         uint8_t vla = Wire.receive();
     #endif;
-    Wire.endTransmission();
 
     value = vha << 8 | vla;
 
